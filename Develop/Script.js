@@ -2,18 +2,59 @@
 console.log("Hi, Checking if you are linked.");
 
 // Trying to capture current date using Moment
+$(document).ready(function () {
+  var momentdata = moment().format("dddd, MMM Do YYYY");
+  console.log(momentdata);
+  var currentDate = $("#currentDay").text(momentdata);
+  var startTime = 8;
+  var endTime = 18;
 
-var momentdata = moment().format("dddd, MMM Do YYYY");
-console.log(momentdata);
-var currentDate = $("#currentDay").text(momentdata);
+  // Creating variables to ensure hour is being compared to a number
 
-// Creating variables to ensure hour is being compared to a number
+  var workHour = parseInt($(".hour").text());
 
-var atmHour = parseInt(moment().format("h"));
-var workHour = parseInt($(".hour").text());
+  console.log(atmHour);
+  console.log(workHour);
 
-console.log(atmHour);
-console.log(workHour);
+  if (onScreenText == null) {
+    var atmHour = moment().hour();
+
+    for (let index = startTime; index < endTime; index++) {
+      var hour = moment().hour(index).format("hh:00 A");
+
+      if (index <= atmHour && index + 1 > atmHour) {
+        renderTimeColor(hour, "present");
+      } else if (index <= atmHour) {
+        renderTimeColor(hour, "past");
+      } else {
+        renderTimeColor(hour, "future");
+      }
+    }
+  } else {
+    var atmHour = moment().hour();
+    var currentStuffInLocalStorage = JSON.parse(onScreenText);
+
+    for (let index = startTime; index < endTime; index++) {
+      var hour = moment().hour(index).format("hh:00 A");
+
+      var text;
+      if (currentStuffInLocalStorage[hour] != undefined) {
+        text = currentStuffInLocalStorage[hour];
+        console.log(hour);
+      } else {
+        text = "";
+      }
+
+      if (index <= atmHour && index + 1 > atmHour) {
+        renderTimeColor(hour, "present", text);
+      } else if (index <= atmHour) {
+        renderTimeColor(hour, "past", text);
+      } else {
+        renderTimeColor(hour, "future", text);
+      }
+    }
+  }
+});
 
 var eventInput9am = $("#event9Title").val();
 var eventInput10am = $("#event10Title").val();
@@ -51,7 +92,6 @@ $(".btn").on("click", function () {
   localStorage.setItem("FourEvent", JSON.stringify(save4));
   localStorage.setItem("FiveEvent", JSON.stringify(save5));
 });
-onScreenText();
 
 function onScreenText() {
   var nineDisplayEvent = JSON.parse(localStorage.getItem("nineEvent"));
@@ -84,11 +124,10 @@ function onScreenText() {
 // usertext = localStorage.getItem("work", usertext);
 
 // Creating an if statement so we can compare the to var in order to know if the time is present past or future
-
-if (workHour === atmHour) {
-  $("button").addClass("present");
-} else if (workHour < atmHour) {
-  $("button").addClass("past");
-} else {
-  $("button").addClass("future");
+var containerEl = $(".container");
+function renderTimeColor() {
+  switch (color) {
+    case "present":
+      containerEl.addClass("present");
+  }
 }
